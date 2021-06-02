@@ -6,7 +6,7 @@ entity ASCIItoNumber is
     Port ( 
         input : in STD_LOGIC_VECTOR(7 downto 0);
         output : out natural;
-        number : out bit -- if 1 output is number, if 0 output is type of operation 
+        number : out STD_LOGIC -- if 1 output is number, if 0 output is type of operation 
     );
 end ASCIItoNumber;
 

@@ -38,7 +38,8 @@ end ASCIItoNumberTB;
 architecture Behavioral of ASCIItoNumberTB is
     signal input: std_logic_vector(7 downto 0) := "00000000";
     signal output: natural;
-    signal number: bit;
+    signal output1: std_logic_vector(7 downto 0) := "00000000";
+    signal number: std_logic;
 begin
     process is							
     begin								
@@ -68,6 +69,12 @@ begin
             input => input,
             output => output,
             number => number
+        );
+    NrToASCII: entity work.NumberToASCII
+        port map(
+            input => output,
+            number => number,
+            output => output1
         );
     
 
