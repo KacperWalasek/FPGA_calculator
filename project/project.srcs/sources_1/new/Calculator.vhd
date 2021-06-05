@@ -17,7 +17,7 @@ architecture Behavioral of Calculator is
     signal last_sign : integer :=0;
     signal expression_modifier : integer := 1; -- 1 or -1
     
-    type STATE_T is (EXPRESSION_START, EXPRESSION_SIGN, EXPRESSION_NUMBER);
+    type STATE_T is (EXPRESSION_START, EXPRESSION_NUMBER, EXPRESSION_ANY);
     signal state : STATE_T := EXPRESSION_START;
 begin
     process(reset, C)
@@ -31,8 +31,8 @@ begin
             case state is
                 when EXPRESSION_START =>
                     current_expression <= expression_modifier * input;
-                    state <= EXPRESSION_NUMBER;
-                when EXPRESSION_NUMBER =>
+                    state <= EXPRESSION_ANY;
+                when EXPRESSION_ANY =>
                     last_sign <= input;
                     case input is
                         when 1 => -- +
@@ -46,13 +46,13 @@ begin
                             current_expression <= 0;
                             state <= EXPRESSION_START;
                         when 3 => -- *
-                            state <= EXPRESSION_SIGN;
+                            state <= EXPRESSION_NUMBER;
                         when others=>
                             
                     end case;                   
-                when EXPRESSION_SIGN =>
+                when EXPRESSION_NUMBER =>
                     current_expression <= current_expression * input; 
-                    state <= EXPRESSION_NUMBER;
+                    state <= EXPRESSION_ANY;
             end case;
         end if;
     end process;
