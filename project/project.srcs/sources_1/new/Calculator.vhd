@@ -14,6 +14,7 @@ end Calculator;
 architecture Behavioral of Calculator is
     signal result : integer := 0;
     signal current_expression : integer := 0;
+    signal current_number : integer := 0;
     signal last_sign : integer :=0;
     signal expression_modifier : integer := 1; -- 1 or -1
     
@@ -30,32 +31,43 @@ begin
         elsif C'event then
             case state is
                 when EXPRESSION_START =>
-                    current_expression <= expression_modifier * input;
+                    current_number <= input;
+                    current_expression <= expression_modifier;
                     state <= EXPRESSION_ANY;
                 when EXPRESSION_ANY =>
-                    last_sign <= input;
-                    case input is
-                        when 1 => -- +
-                            result <= result + current_expression;
-                            expression_modifier <= 1;
-                            current_expression <= 0;
-                            state <= EXPRESSION_START;
-                        when 2 =>  -- -
-                            result <= result + current_expression;
-                            expression_modifier <= -1;
-                            current_expression <= 0;
-                            state <= EXPRESSION_START;
-                        when 3 => -- *
-                            state <= EXPRESSION_NUMBER;
-                        when others=>
-                            
-                    end case;                   
+                    if number = '0' then
+                        -- odczytaj znak
+                        last_sign <= input;
+                        case input is
+                            when 1 => -- +
+                                result <= result + current_expression * current_number;
+                                current_number <= 0;
+                                expression_modifier <= 1;
+                                current_expression <= 0;
+                                state <= EXPRESSION_START;
+                            when 2 =>  -- -
+                                result <= result + current_expression * current_number;
+                                current_number <= 0;
+                                expression_modifier <= -1;
+                                current_expression <= 0;
+                                state <= EXPRESSION_START;
+                            when 3 => -- *
+                                current_expression <= current_expression * current_number;
+                                current_number <= 1;
+                                state <= EXPRESSION_NUMBER;
+                            when others=>
+                                
+                        end case;  
+                    else
+                        -- odczytaj kolejn¹ cyfrê liczby
+                        current_number <= current_number * 10 + input;
+                    end if;                 
                 when EXPRESSION_NUMBER =>
-                    current_expression <= current_expression * input; 
+                    current_number <= input; 
                     state <= EXPRESSION_ANY;
             end case;
         end if;
     end process;
     
-    output <= result + current_expression;
+    output <= result + current_expression * current_number;
 end Behavioral;

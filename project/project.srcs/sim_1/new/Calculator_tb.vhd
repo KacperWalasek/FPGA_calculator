@@ -19,7 +19,10 @@ begin
     R <= '0';          
     number <= '1';         
     input <= 2; wait for 500 ns; 
-                                
+                                          
+    number <= '1';         
+    input <= 2; wait for 500 ns;
+     
     number <= '0';       
     input <= 1; wait for 500 ns;   
            
@@ -37,7 +40,12 @@ begin
                    
     number <= '1';                      
     input <= 3; wait for 500 ns;
-     
+                           
+    number <= '1';                      
+    input <= 1; wait for 500 ns;
+                           
+    number <= '0';                      
+    input <= 1; 
     wait for 500 ns;
     R <='1';    wait for 400 ns;         
             
