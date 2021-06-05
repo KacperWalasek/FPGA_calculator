@@ -12,11 +12,10 @@ entity Calculator is
 end Calculator;
     
 architecture Behavioral of Calculator is
-    signal result : integer := 0;
-    signal current_expression : integer := 0;
-    signal current_number : integer := 0;
-    signal last_sign : integer :=0;
-    signal expression_modifier : integer := 1; -- 1 or -1
+    signal result : integer := 0; -- wartoœæ liczonego zadania bez obecnie wczytywanego wyra¿enia (a*b*...*c)
+    signal current_expression : integer := 0;   -- wartoœæ obecnie liczbonego wyra¿enia (a*b*...*c) bez obecnie wczytywanej liczby
+    signal current_number : integer := 0;   -- obecnie wczytywana liczba
+    signal expression_modifier : integer := 1; -- 1 lub -1 w zale¿noœci, czy przed wyra¿eniem by³ znak - czy +
     
     type STATE_T is (EXPRESSION_START, EXPRESSION_NUMBER, EXPRESSION_ANY);
     signal state : STATE_T := EXPRESSION_START;
@@ -31,24 +30,28 @@ begin
         elsif C'event then
             case state is
                 when EXPRESSION_START =>
+                    -- odzczytaj pierwsz¹ cyfrê pierwszej liczby wyra¿enia
                     current_number <= input;
                     current_expression <= expression_modifier;
-                    state <= EXPRESSION_ANY;
+                    state <= EXPRESSION_ANY;                 
+               when EXPRESSION_NUMBER =>
+                   -- odczytaj pierwsz¹ cyfrê liczby
+                   current_number <= input; 
+                   state <= EXPRESSION_ANY;
                 when EXPRESSION_ANY =>
                     if number = '0' then
                         -- odczytaj znak
-                        last_sign <= input;
                         case input is
                             when 1 => -- +
                                 result <= result + current_expression * current_number;
-                                current_number <= 0;
                                 expression_modifier <= 1;
+                                current_number <= 0;
                                 current_expression <= 0;
                                 state <= EXPRESSION_START;
                             when 2 =>  -- -
                                 result <= result + current_expression * current_number;
-                                current_number <= 0;
                                 expression_modifier <= -1;
+                                current_number <= 0;
                                 current_expression <= 0;
                                 state <= EXPRESSION_START;
                             when 3 => -- *
@@ -61,10 +64,7 @@ begin
                     else
                         -- odczytaj kolejn¹ cyfrê liczby
                         current_number <= current_number * 10 + input;
-                    end if;                 
-                when EXPRESSION_NUMBER =>
-                    current_number <= input; 
-                    state <= EXPRESSION_ANY;
+                    end if;
             end case;
         end if;
     end process;
