@@ -7,7 +7,7 @@ entity Calculator is
         C : in std_logic;
         input : in natural;
         number : in std_logic;
-        output : out integer     
+        output : out integer := 0     
     );
 end Calculator;
     
