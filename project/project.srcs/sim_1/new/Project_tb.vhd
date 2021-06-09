@@ -28,6 +28,13 @@ architecture behavioural of PROJECT_TB is
   constant O_ZEGARA	:time := 1 sec/F_ZEGARA;		-- okres zegara systemowego
   constant O_BITU	:time := 1 sec/L_BODOW;			-- okres czasu trwania jednego bodu
 
+constant r1: string := "23-679*2=";
+constant r2: string := "2*2=";
+constant r3: string := "5*2*2=";
+constant r4: string := "112*2=";
+constant r5: string := "2*0+22=";
+
+signal tmp : std_logic := '0';
   constant ROZKAZ	:string := "23-679*2=";			-- sekwencja wysylanych znakow ASCII
   --constant ROZKAZ	:string := "123-"&CR&"123+678=";	-- sekwencja wysylanych znakow ASCII
   signal   WYNIK	:string(ROZKAZ'length+L_CYFR downto 1); -- sekwencja odebranych znakow ASCII
@@ -42,39 +49,50 @@ begin
 
  process is							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
-    R <= '1'; wait for 100 ns;					-- ustawienie sygnalu 'res' na '1' i odczekanie 100 ns
-    R <= '0'; wait;						-- ustawienie sygnalu 'res' na '0' i zatrzymanie
-  end process;							-- zakonczenie procesu
+    R <= '1'; wait for 100 ns;					
+    R <= '0'; wait for 150000ns;
+    end process;							-- zakonczenie procesu
 
   process is							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
     C <= not(C); wait for O_ZEGARA/2;				-- zanegowanie sygnalu 'clk' i odczekanie pol okresu zegara
   end process;							-- zakonczenie procesu
   
-  process is							-- proces bezwarunkowy
-    variable D :std_logic_vector(B_SLOWA-1 downto 0);		-- deklaracja zmiennej 'D' slowa nadawanego
+  process is
+    procedure send(constant r : in string;
+                   signal RX: out std_logic
+                   ) is	-- deklaracja funkcji wewnetrznej 'neg'
+      variable D :std_logic_vector(B_SLOWA-1 downto 0);		-- deklaracja zmiennej 'D' slowa nadawanego
+      begin                            -- czesc wykonawcza funkcji wewnetrznej
+         RX <= neg('0',N_SERIAL);					-- incjalizacja sygnalu 'RX' na wartosci spoczynkowa
+          wait for 200 ns;                        -- odczekanie 200 ns
+          for i in 1 to r'length loop                -- petla po kolenych wysylanych znakach
+            wait for 10*O_BITU;                    -- odczekanie zadanego czasu przerwy 
+            D := CONV_STD_LOGIC_VECTOR(character'pos(r(i)),D'length); -- pobranie i konwersja 'i-tego' znaku ASCII
+            RX <= neg('1',N_SERIAL);                    -- ustawienie 'RX' na wartosc bitu START
+            wait for O_BITU;                        -- odczekanie jednego bodu
+            for i in 0 to B_SLOWA-1 loop                -- petla po kolejnych bitach slowa danych 'D'
+              RX <= neg(neg(D(i),N_SLOWO),N_SERIAL);            -- ustawienie 'RX' na wartosc bitu 'D(i)'
+              wait for O_BITU;                    -- odczekanie jednego bodu
+            end loop;                            -- zakonczenie petli
+            if (B_PARZYSTOSCI = 1) then                -- badanie aktywowania bitu parzystosci
+              RX <= neg(neg(XOR_REDUCE(D),N_SLOWO),N_SERIAL);        -- ustawienie 'RX' na wartosc bitu parzystosci    
+              wait for O_BITU;                    -- odczekanie jednego bodu
+            end if;                            -- zakonczenie instukcji warunkowej
+            for i in 0 to B_STOPOW-1 loop                -- petla po liczbie bitow STOP
+              RX <= neg('0',N_SERIAL);                    -- ustawienie 'RX' na wartosc bitu STOP
+              wait for O_BITU;                    -- odczekanie jednego bodu
+            end loop;                            -- zakonczenie petli
+          end loop;                            -- zakonczenie petli
+          wait for 100000ns;
+      end procedure;							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
-    RX <= neg('0',N_SERIAL);					-- incjalizacja sygnalu 'RX' na wartosci spoczynkowa
-    wait for 200 ns;						-- odczekanie 200 ns
-    for i in 1 to rozkaz'length loop				-- petla po kolenych wysylanych znakach
-      wait for 10*O_BITU;					-- odczekanie zadanego czasu przerwy 
-      D := CONV_STD_LOGIC_VECTOR(character'pos(rozkaz(i)),D'length); -- pobranie i konwersja 'i-tego' znaku ASCII
-      RX <= neg('1',N_SERIAL);					-- ustawienie 'RX' na wartosc bitu START
-      wait for O_BITU;						-- odczekanie jednego bodu
-      for i in 0 to B_SLOWA-1 loop				-- petla po kolejnych bitach slowa danych 'D'
-        RX <= neg(neg(D(i),N_SLOWO),N_SERIAL);			-- ustawienie 'RX' na wartosc bitu 'D(i)'
-        wait for O_BITU;					-- odczekanie jednego bodu
-      end loop;							-- zakonczenie petli
-      if (B_PARZYSTOSCI = 1) then				-- badanie aktywowania bitu parzystosci
-        RX <= neg(neg(XOR_REDUCE(D),N_SLOWO),N_SERIAL);		-- ustawienie 'RX' na wartosc bitu parzystosci	
-        wait for O_BITU;					-- odczekanie jednego bodu
-      end if;							-- zakonczenie instukcji warunkowej
-      for i in 0 to B_STOPOW-1 loop				-- petla po liczbie bitow STOP
-        RX <= neg('0',N_SERIAL);					-- ustawienie 'RX' na wartosc bitu STOP
-        wait for O_BITU;					-- odczekanie jednego bodu
-      end loop;							-- zakonczenie petli
-    end loop;							-- zakonczenie petli
-    wait;							-- zatrzymanie procesu do konca symulacji
+    send(r1, RX); 
+    send(r2, RX);							
+    send(r3, RX);
+    send(r4, RX);
+    send(r5, RX);
+    wait;
   end process;							-- zakonczenie procesu
   
   serial_sum_inst: entity work.ASCIICalculator
@@ -86,7 +104,6 @@ begin
       B_STOPOW             => B_STOPOW,				-- liczba bitow stopu (1-2)
       N_SERIAL             => N_SERIAL,				-- negacja logiczna sygnalu szeregowego
       N_SLOWO              => N_SLOWO,				-- negacja logiczna slowa danych
-      L_CYFR               => L_CYFR,				-- liczba cyfr dziesietnych
       L_BODOW_PRZERWY      => L_BODOW_PRZERWY			-- czas przerwy w nadawaniu w [bodach]
     )                      
     port map (             
