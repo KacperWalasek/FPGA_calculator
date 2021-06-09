@@ -17,7 +17,7 @@ entity SERIAL_RX	is			-- instancja odbiornika szeregowego 'SERIAL_RX'
     port (							-- mapowanie sygnalow do portow
       R                    :in std_logic;				-- sygnal resetowania
       C                    :in std_logic;			-- zegar taktujacy
-      RX                    :in std_logic;			-- odebrany sygnal szeregowy
+      RX                   :in std_logic;			-- odebrany sygnal szeregowy
       SLOWO                :out std_logic_vector(B_SLOWA-1 downto 0);			-- odebrane slowo danych
       GOTOWE               :out std_logic;					-- flaga potwierdzenia odbioru
       BLAD                 :out std_logic				-- flaga wykrycia bledu w odbiorze

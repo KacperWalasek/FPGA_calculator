@@ -17,5 +17,6 @@ begin
               std_logic_vector(to_unsigned(43, 8)) when (input = 1) else
               std_logic_vector(to_unsigned(45, 8)) when (input = 2) else
               std_logic_vector(to_unsigned(42, 8)) when (input = 3) else
+              std_logic_vector(to_unsigned(61, 8)) when (input = 4) else
               std_logic_vector(to_unsigned(32, 8)); --space
 end Behavioral;

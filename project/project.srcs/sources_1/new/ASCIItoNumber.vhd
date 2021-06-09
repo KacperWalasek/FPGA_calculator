@@ -19,17 +19,7 @@ begin
         1                               when (ascii_code = 43) else  -- + 
         2                               when (ascii_code = 45) else  -- -
         3                               when (ascii_code = 42) else  -- *
+        4                               when (ascii_code = 61) else  -- =
         0;
     number <= '1' when (ascii_code > 47 and ascii_code < 58) else '0';
---    process(ascii_code) is
---    begin
---        if ascii_code > 47 and ascii_code < 58 then --is number
---            output <= to_integer(ascii_code) - 47;
---            number <= '1';
---        else
---            output <= 43 when 1 else 45;
-            
---        end if;
-        
---    end process;
 end Behavioral;
