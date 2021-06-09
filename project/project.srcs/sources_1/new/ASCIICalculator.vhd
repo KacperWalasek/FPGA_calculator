@@ -86,7 +86,7 @@ begin
     );
     NrToDgt: entity work.NumberToDigits
     port map(
-        R => '0',
+        R => R,
         C => C,
         input => result,
         trigger => trigger_nrToDgt,
