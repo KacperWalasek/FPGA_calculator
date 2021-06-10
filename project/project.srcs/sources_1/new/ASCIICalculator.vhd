@@ -34,9 +34,9 @@ architecture Behavioral of ASCIICalculator is
     signal result_digit : integer;
     signal result_character : STD_LOGIC_VECTOR(7 downto 0);
     signal trigger_nrToDgt: STD_LOGIC;
+    signal last_calc_done : std_logic := '0';
 begin
     process (C)
-        variable last_calc_done : std_logic := '0';
     begin
         if trigger_nrToDgt = '1' and nrToDgt_done = '0' then  -- przesuniêcie tx_nadaj o jeden tik zegara wzglêdem trigger_nrToDgt
             tx_nadaj <= '1';
@@ -48,7 +48,7 @@ begin
         else
             trigger_nrToDgt <= '0';
         end if;
-        last_calc_done := calc_done;
+        last_calc_done <= calc_done;
     end process;
     UART_RX: entity work.SERIAL_RX
      generic map (

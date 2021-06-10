@@ -68,16 +68,16 @@ extern void transaction_1(char*, char*, unsigned, unsigned, unsigned);
 extern void transaction_2(char*, char*, unsigned, unsigned, unsigned);
 extern void vhdl_transfunc_eventcallback(char*, char*, unsigned, unsigned, unsigned, char *);
 extern void transaction_16(char*, char*, unsigned, unsigned, unsigned);
-extern void transaction_20(char*, char*, unsigned, unsigned, unsigned);
 extern void transaction_21(char*, char*, unsigned, unsigned, unsigned);
-funcp funcTab[26] = {(funcp)execute_21, (funcp)execute_22, (funcp)execute_60, (funcp)execute_25, (funcp)execute_27, (funcp)execute_28, (funcp)execute_34, (funcp)execute_30, (funcp)execute_31, (funcp)execute_33, (funcp)execute_47, (funcp)execute_48, (funcp)execute_49, (funcp)execute_51, (funcp)execute_52, (funcp)execute_54, (funcp)execute_56, (funcp)execute_58, (funcp)execute_59, (funcp)transaction_0, (funcp)transaction_1, (funcp)transaction_2, (funcp)vhdl_transfunc_eventcallback, (funcp)transaction_16, (funcp)transaction_20, (funcp)transaction_21};
+extern void transaction_22(char*, char*, unsigned, unsigned, unsigned);
+funcp funcTab[26] = {(funcp)execute_21, (funcp)execute_22, (funcp)execute_60, (funcp)execute_25, (funcp)execute_27, (funcp)execute_28, (funcp)execute_34, (funcp)execute_30, (funcp)execute_31, (funcp)execute_33, (funcp)execute_47, (funcp)execute_48, (funcp)execute_49, (funcp)execute_51, (funcp)execute_52, (funcp)execute_54, (funcp)execute_56, (funcp)execute_58, (funcp)execute_59, (funcp)transaction_0, (funcp)transaction_1, (funcp)transaction_2, (funcp)vhdl_transfunc_eventcallback, (funcp)transaction_16, (funcp)transaction_21, (funcp)transaction_22};
 const int NumRelocateId= 26;
 
 void relocate(char *dp)
 {
 	iki_relocate(dp, "xsim.dir/PROJECT_TB_behav/xsim.reloc",  (void **)funcTab, 26);
-	iki_vhdl_file_variable_register(dp + 10336);
-	iki_vhdl_file_variable_register(dp + 10392);
+	iki_vhdl_file_variable_register(dp + 12496);
+	iki_vhdl_file_variable_register(dp + 12552);
 
 
 	/*Populate the transaction function pointer field in the whole net structure */

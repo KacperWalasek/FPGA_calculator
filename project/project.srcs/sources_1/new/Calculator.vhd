@@ -18,12 +18,12 @@ architecture Behavioral of Calculator is
     signal current_expression : integer := 0;   -- wartoœæ obecnie liczbonego wyra¿enia (a*b*...*c) bez obecnie wczytywanej liczby
     signal current_number : integer := 0;   -- obecnie wczytywana liczba
     signal expression_modifier : integer := 1; -- 1 lub -1 w zale¿noœci, czy przed wyra¿eniem by³ znak - czy +
+    signal last_trigger: std_logic;
     
     type STATE_T is (EXPRESSION_START, EXPRESSION_NUMBER, EXPRESSION_ANY);
     signal state : STATE_T := EXPRESSION_START;
 begin
     process(reset, C)
-        variable last_trigger: std_logic;
     begin
         if reset = '1' then
             state <= EXPRESSION_START;
@@ -78,7 +78,7 @@ begin
                         end if;
                 end case;
             end if;
-            last_trigger := TRIGGER;
+            last_trigger <= TRIGGER;
         end if;
     end process;
     

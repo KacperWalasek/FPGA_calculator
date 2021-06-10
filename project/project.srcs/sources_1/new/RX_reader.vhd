@@ -24,18 +24,18 @@ entity RX_reader	is			-- instancja odbiornika szeregowego 'SERIAL_RX'
     
   architecture  behavioral of RX_reader	is
     signal change : std_logic:= '0';
+    signal c: natural :=0;
+    signal d:std_logic :='0';
+    signal p:std_logic :='0';
+    signal last_bod_c: std_logic:='0';
   begin
         
     process(clk,RX,R) is
-    variable c: natural :=0;
-    variable d:std_logic :='0';
-    variable p:std_logic :='0';
-    variable last_bod_c: std_logic:='0';
     begin
         if R ='1' then
-            c:=0;
-            d:='0';
-            p:='0';
+            c<=0;
+            d<='0';
+            p<='0';
             done<='0';
             blad<='0';
             tab<=(0 => '0', others => '0');
@@ -55,20 +55,20 @@ entity RX_reader	is			-- instancja odbiornika szeregowego 'SERIAL_RX'
                             tab(c-1)<= RX;
                         end if;
                         if RX='1' then
-                            p:= not p;
+                            p<= not p;
                         end if;
                     end if;       
                 end if;
                 if c>0 or RX='1' then
-                    c:=c+1;
+                    c<=c+1;
                 end if;
-                if c>B_SLOWA+1 then
-                    d:='1';
+                if c>B_SLOWA then
+                    d<='1';
                     done<='1';
                 end if;
             end if; --bod_c tick
         end if;
-        last_bod_c:= bod_c;
+        last_bod_c<= bod_c;
     end process;
   	
   end behavioral;

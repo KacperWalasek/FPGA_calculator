@@ -14,51 +14,57 @@ end NumberToDigits;
 
 architecture Behavioral of NumberToDigits is
     signal left : integer := 0;
+    signal last_trigger : std_logic := '0';
+    signal found_first: std_logic := '0';
+    signal ind : integer := 5;
+    signal value : integer := 0;
 begin
 
 process (C, R, input) is
-    variable ind : integer := 5;
-    variable value : integer := 0;
-    variable found_first: std_logic := '0';
     variable k : integer := 0;
-    variable last_trigger : std_logic := '0';
+    variable ind_tmp : integer;
+    variable value_tmp : integer;
 begin
+    ind_tmp := ind;
+    value_tmp := value;
     if R'event or input'event  then
-        value := 0;
-        found_first := '0';
-        ind := 5;
+        value_tmp := 0;
+        found_first <= '0';
+        ind_tmp := 5;
         done <= '0';
         left <= -1;
     else
         if trigger = '1' and last_trigger = '0' then
-            if ind = -1 then
+            if ind_tmp = -1 then
                 done <= '1';
             else
                 number <= '1';
                 if found_first = '0' then
-                    while ind >= 0 and value = 0 loop
-                        k := 10**ind;
-                        value := (abs(input) mod (k*10) - abs(input) mod k ) / k;
-                        ind := ind - 1;
+                    while ind_tmp >= 0 and value_tmp = 0 loop
+                        k := 10**ind_tmp;
+                        value_tmp := (abs(input) mod (k*10) - abs(input) mod k ) / k;
+                        ind_tmp := ind_tmp - 1;
                     end loop;
                     if input < 0 then
                         number <= '0';
-                        value := 2;
-                        ind := ind + 1;
+                        value_tmp := 2;
+                        ind_tmp := ind_tmp + 1;
                     end if;
-                    found_first := '1';
+                    found_first <= '1';
                 else
-                    k := 10**ind;
-                    value := (abs(input) mod (k*10) - abs(input) mod k ) / k;
-                    ind := ind - 1;
+                    k := 10**ind_tmp;
+                    value_tmp := (abs(input) mod (k*10) - abs(input) mod k ) / k;
+                    ind_tmp := ind_tmp - 1;
                 end if;
                 
-                output <= value;
-                left <= ind;
+                output <= value_tmp;
+                left <= ind_tmp;
             end if;
         end if;
-        last_trigger := trigger;
+        last_trigger <= trigger;
     end if;
+    value <= value_tmp;
+    ind <= ind_tmp;
 end process;
 
 end Behavioral;
