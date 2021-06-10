@@ -28,16 +28,14 @@ architecture behavioural of PROJECT_TB is
   constant O_ZEGARA	:time := 1 sec/F_ZEGARA;		-- okres zegara systemowego
   constant O_BITU	:time := 1 sec/L_BODOW;			-- okres czasu trwania jednego bodu
 
-constant r1: string := "23-679*2=";
-constant r2: string := "2*2=";
-constant r3: string := "5*2*2=";
-constant r4: string := "112*2=";
-constant r5: string := "2*0+22=";
+constant r1: string := "2+2=";
+constant r2: string := "2+2*2=";
+constant r3: string := "5*0*2=";
+constant r4: string := "100-300=";
+constant r5: string := "1+1+1+1+1+1+1+1+1+1+1+1=";
 
-signal tmp : std_logic := '0';
-  constant ROZKAZ	:string := "23-679*2=";			-- sekwencja wysylanych znakow ASCII
-  --constant ROZKAZ	:string := "123-"&CR&"123+678=";	-- sekwencja wysylanych znakow ASCII
-  signal   WYNIK	:string(ROZKAZ'length+L_CYFR downto 1); -- sekwencja odebranych znakow ASCII
+  signal Numer_rozkazu : integer := 0;
+  signal   WYNIK	:string(11 downto 1); -- sekwencja odebranych znakow ASCII
 
   function neg(V :std_logic; N :boolean) return std_logic is	-- deklaracja funkcji wewnetrznej 'neg'
   begin								-- czesc wykonawcza funkcji wewnetrznej
@@ -50,7 +48,7 @@ begin
  process is							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
     R <= '1'; wait for 100 ns;					
-    R <= '0'; wait for 150000ns;
+    R <= '0'; wait;
     end process;							-- zakonczenie procesu
 
   process is							-- proces bezwarunkowy
@@ -60,7 +58,8 @@ begin
   
   process is
     procedure send(constant r : in string;
-                   signal RX: out std_logic
+                   signal RX: out std_logic;
+                   signal RES: out std_logic
                    ) is	-- deklaracja funkcji wewnetrznej 'neg'
       variable D :std_logic_vector(B_SLOWA-1 downto 0);		-- deklaracja zmiennej 'D' slowa nadawanego
       begin                            -- czesc wykonawcza funkcji wewnetrznej
@@ -84,14 +83,22 @@ begin
               wait for O_BITU;                    -- odczekanie jednego bodu
             end loop;                            -- zakonczenie petli
           end loop;                            -- zakonczenie petli
+          
           wait for 100000ns;
+          RES <= '1'; wait for 100 ns;					
+          RES <= '0'; wait  for 100 ns;
       end procedure;							-- proces bezwarunkowy
-  begin								-- czesc wykonawcza procesu
-    send(r1, RX); 
-    send(r2, RX);							
-    send(r3, RX);
-    send(r4, RX);
-    send(r5, RX);
+  begin			
+    Numer_rozkazu <= 1;		
+    send(r1, RX, R);			
+    Numer_rozkazu <= 2;    
+    send(r2, RX, R);
+    Numer_rozkazu <= 3;							
+    send(r3, RX, R);
+    Numer_rozkazu <= 4;
+    send(r4, RX, R);	
+    Numer_rozkazu <= 5;
+    send(r5, RX, R);
     wait;
   end process;							-- zakonczenie procesu
   
