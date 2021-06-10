@@ -28,11 +28,16 @@ architecture behavioural of PROJECT_TB is
   constant O_ZEGARA	:time := 1 sec/F_ZEGARA;		-- okres zegara systemowego
   constant O_BITU	:time := 1 sec/L_BODOW;			-- okres czasu trwania jednego bodu
 
-constant r1: string := "23-679*2=";
-constant r2: string := "2*2=";
-constant r3: string := "5*2*2=";
-constant r4: string := "112*2=";
-constant r5: string := "2*0+22=";
+--constant r1: string := "23-679*2=";
+--constant r2: string := "2*2=";
+--constant r3: string := "5*2*2=";
+--constant r4: string := "112*2=";
+--constant r5: string := "2*0+22=";
+constant r1: string := "2+2=";
+constant r2: string := "2+22=";
+constant r3: string := "50*2=";
+constant r4: string := "100-300=";
+constant r5: string := "1+1+1+1+1+1+1+1+1+1+1+1=";
 
 signal tmp : std_logic := '0';
   constant ROZKAZ	:string := "23-679*2=";			-- sekwencja wysylanych znakow ASCII
@@ -47,11 +52,12 @@ signal tmp : std_logic := '0';
  
 begin
 
- process is							-- proces bezwarunkowy
-  begin								-- czesc wykonawcza procesu
-    R <= '1'; wait for 100 ns;					
-    R <= '0'; wait for 150000ns;
-    end process;							-- zakonczenie procesu
+-- process is							-- proces bezwarunkowy
+--  begin								-- czesc wykonawcza procesu
+--    R <= '1'; wait for 100 ns;					
+--    R <= '0'; wait for 300000ns;
+--    end process;							-- zakonczenie procesu
+
 
   process is							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
@@ -87,11 +93,23 @@ begin
           wait for 100000ns;
       end procedure;							-- proces bezwarunkowy
   begin								-- czesc wykonawcza procesu
+    R <= '1'; wait for 100 ns;					
+     R <= '0';
     send(r1, RX); 
-    send(r2, RX);							
+     R <= '1'; wait for 100 ns;					
+        R <= '0';
+    send(r2, RX);	
+     R <= '1'; wait for 100 ns;					
+        R <= '0';						
     send(r3, RX);
+     R <= '1'; wait for 100 ns;					
+        R <= '0';
     send(r4, RX);
+     R <= '1'; wait for 100 ns;					
+        R <= '0';
     send(r5, RX);
+     R <= '1'; wait for 100 ns;					
+        R <= '0';
     wait;
   end process;							-- zakonczenie procesu
   

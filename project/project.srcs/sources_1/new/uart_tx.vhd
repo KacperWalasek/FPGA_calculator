@@ -47,17 +47,19 @@ entity UART_TX	is			-- instancja odbiornika szeregowego 'SERIAL_RX'
                WYSYLANIE    <= '0';                    -- wyzerowanie flagi potwierdzenia nadania
                
                 elsif (rising_edge(C)) then	            
-                    if (not working) and NADAJ='1' then
-                    l_czasu <= 0;					
-                    l_bitow <= 0;    
-                    working <= true;
-                    WYSYLANIE <= '1';
+                    if (not working) then
+                        if NADAJ = '1' then
+                        l_czasu <= 0;					
+                        l_bitow <= 0;    
+                        working <= true;
+                        WYSYLANIE <= '1';
                         bufor     <= SLOWO;				-- zapisanie bufora bitow danych
                         f_parzystosc <= XOR_REDUCE(SLOWO);            -- wyznaczenie flagi parzystosci
                             if (N_SLOWO = TRUE) then                -- badanie warunku zanegowania odebranego slowa
                               bufor        <= not(SLOWO);            -- zapisanie bufora zanegowanych bitow danych
                           f_parzystosc <= not(XOR_REDUCE(SLOWO));        -- wyznaczenie flagi parzystosci
-                        end if;                        -- zakonczenie instukcji warunkowej
+                            end if;                        -- zakonczenie instukcji warunkowej
+                        end if;
                    elsif (l_czasu /= T) then
                         l_czasu <= l_czasu + 1;
                    else 
