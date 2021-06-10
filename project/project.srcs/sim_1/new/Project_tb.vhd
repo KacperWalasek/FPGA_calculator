@@ -33,11 +33,11 @@ architecture behavioural of PROJECT_TB is
 --constant r3: string := "5*2*2=";
 --constant r4: string := "112*2=";
 --constant r5: string := "2*0+22=";
-constant r1: string := "2+2=";
-constant r2: string := "2+22=";
-constant r3: string := "50*2=";
-constant r4: string := "100-300=";
-constant r5: string := "1+1+1+1+1+1+1+1+1+1+1+1=";
+constant r1: string := "1+11-111=";
+constant r2: string := "2+2*2-3=";
+constant r3: string := "2*0*5=";
+constant r4: string := "1+1+1+1+1+1+1+1+1+1+1+1=";
+constant r5: string := "100-300=";
 
 signal tmp : std_logic := '0';
   constant ROZKAZ	:string := "23-679*2=";			-- sekwencja wysylanych znakow ASCII
